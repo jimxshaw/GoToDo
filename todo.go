@@ -27,6 +27,18 @@ func (l *List) Add(task string) {
 	*l = append(*l, newItem)
 }
 
+func (l *List) Delete(item int) error {
+	list := *l
+
+	if item < 0 || item > len(list) {
+		return fmt.Errorf("Item %d does not exist", item)
+	}
+
+	*l = append(list[:item-1], list[item:]...)
+
+	return nil
+}
+
 func (l *List) Complete(item int) error {
 	list := *l
 
