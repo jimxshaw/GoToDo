@@ -1,7 +1,9 @@
 package todo
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
 	"time"
 )
 
@@ -42,6 +44,25 @@ func (l *List) Delete(item int) error {
 	*l = append(list[:item-1], list[item:]...)
 
 	return nil
+}
+
+// Save method encodes the list as JSON and saves it to file.
+func (l *List) Save(filename string) error {
+	json, err := json.Marshal(l)
+
+	if err != nil {
+		return err
+	}
+
+	// A FileMode represents a file's mode and permission bits.
+	// The bits have the same definition on all systems,
+	// so that information about files can be moved from one
+	// system to another portably. Not all bits apply to all systems.
+	// The only required bit is ModeDir for directories.
+	// 0644 means (6) file's owner can read & write,
+	// (4) users in the same group as the file's owner can read and
+	// (4) all users can read.
+	return os.WriteFile(filename, json, 0644)
 }
 
 func (l *List) Complete(item int) error {
