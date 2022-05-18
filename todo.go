@@ -2,6 +2,7 @@ package todo
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"time"
@@ -17,6 +18,25 @@ type item struct {
 
 // This is a list of ToDo items.
 type List []item
+
+// Get method opens the file, decodes the
+// JSON and parses it into a list.
+func (l *List) Get(filename string) error {
+	file, err := os.ReadFile(filename)
+
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return nil
+		}
+		return err
+	}
+
+	if len(file) == 0 {
+		return nil
+	}
+
+	return json.Unmarshal(file, l)
+}
 
 func (l *List) Add(task string) {
 	newItem := item{
