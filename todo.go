@@ -34,6 +34,11 @@ func (l *List) Delete(item int) error {
 		return fmt.Errorf("Item %d does not exist", item)
 	}
 
+	// Get all the items in the list up to but not
+	// including the item to be deleted and then appending
+	// all items after the item to be deleted.
+	// Using ... to unpack the slice as the append argument cannot
+	// take []item but rather only item.
 	*l = append(list[:item-1], list[item:]...)
 
 	return nil
