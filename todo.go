@@ -1,6 +1,7 @@
 package todo
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -24,4 +25,18 @@ func (l *List) Add(task string) {
 	}
 
 	*l = append(*l, newItem)
+}
+
+func (l *List) Complete(item int) error {
+	list := *l
+
+	if item <= 0 || item > len(list) {
+		return fmt.Errorf("Item %d does not exist", item)
+	}
+
+	// Arrays are 0 based and need to be adjusted.
+	list[item-1].Done = true
+	list[item-1].CompletionDate = time.Now()
+
+	return nil
 }
