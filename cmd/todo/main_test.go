@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 )
 
@@ -35,4 +37,39 @@ func TestMain(m *testing.M) {
 	os.Remove(fileName)
 
 	os.Exit(result)
+}
+
+func TestTodoCLI(t *testing.T) {
+	task := "test task 1"
+
+	directory, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	cmdPath := filepath.Join(directory, binName)
+
+	t.Run("AddNewTask", func(t *testing.T) {
+		cmd := exec.Command(cmdPath, strings.Split(task, " ")...)
+
+		if err := cmd.Run(); err != nil {
+			t.Fatal(err)
+		}
+	})
+
+	t.Run("ListTasks", func(t *testing.T) {
+		// List out the tasks if there are no arguments.
+		cmd := exec.Command(cmdPath)
+
+		output, err := cmd.CombinedOutput()
+		if err != nil {
+			t.Fatal()
+		}
+
+		expected := task + "\n"
+
+		if expected != string(output) {
+			t.Errorf("Expected %q, got %q", expected, string(output))
+		}
+	})
 }
