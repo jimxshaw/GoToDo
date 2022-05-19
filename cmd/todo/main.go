@@ -8,12 +8,12 @@ import (
 	todo "github.com/jimxshaw/GoToDo"
 )
 
-const fileName = ".todo.json"
+const listFileName = ".todo.json"
 
 func main() {
 	list := &todo.List{}
 
-	if err := list.Get(fileName); err != nil {
+	if err := list.Get(listFileName); err != nil {
 		// Standard Error is preferred over Standard Out for
 		// errors as the user can filter them out more easily.
 		fmt.Fprintln(os.Stderr, err)
@@ -33,7 +33,7 @@ func main() {
 
 		list.Add(task)
 
-		if err := list.Save(fileName); err != nil {
+		if err := list.Save(listFileName); err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
