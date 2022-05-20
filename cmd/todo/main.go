@@ -1,9 +1,9 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
-	"strings"
 
 	todo "github.com/jimxshaw/GoToDo"
 )
@@ -11,31 +11,52 @@ import (
 const listFileName = ".todo.json"
 
 func main() {
-	list := &todo.List{}
+	// Define and then parse the command line flags.
+	// Return values are pointers.
+	task := flag.String("task", "", "Task to be added to the list")
+	list := flag.Bool("list", false, "List all tasks")
+	complete := flag.Int("complete", 0, "Item number to be marked as complete")
 
-	if err := list.Get(listFileName); err != nil {
+	flag.Parse()
+
+	todoList := &todo.List{}
+
+	if err := todoList.Get(listFileName); err != nil {
 		// Standard Error is preferred over Standard Out for
 		// errors as the user can filter them out more easily.
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 
-	// User arguments will determine what needs to be done next.
 	switch {
-	// Print the list if there aren't more than 1 argument.
-	case len(os.Args) == 1:
-		for _, item := range *list {
-			fmt.Println(item.Task)
+	case *list:
+		for _, item := range *todoList {
+			if !item.Done {
+				fmt.Println(item.Task)
+			}
 		}
-	default:
-		// The first argument is always the program name.
-		task := strings.Join(os.Args[1:], " ")
-
-		list.Add(task)
-
-		if err := list.Save(listFileName); err != nil {
+	// Item numbers start with 1.
+	case *complete > 0:
+		// Complete the item number then save the list.
+		if err := todoList.Complete(*complete); err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
+
+		if err := todoList.Save(listFileName); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+	case *task != "":
+		todoList.Add(*task)
+
+		if err := todoList.Save(listFileName); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+	default:
+		// Invalid flags.
+		fmt.Fprintln(os.Stderr, "Invalid option flag")
+		os.Exit(1)
 	}
 }
