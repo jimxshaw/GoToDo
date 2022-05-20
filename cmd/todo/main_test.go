@@ -57,7 +57,6 @@ func TestTodoCLI(t *testing.T) {
 	})
 
 	t.Run("ListTasks", func(t *testing.T) {
-		// List out the tasks if there are no arguments.
 		cmd := exec.Command(cmdPath, "-list")
 
 		output, err := cmd.CombinedOutput()
@@ -70,5 +69,25 @@ func TestTodoCLI(t *testing.T) {
 		if expected != string(output) {
 			t.Errorf("Expected %q, got %q", expected, string(output))
 		}
+	})
+
+	t.Run("CompleteTask", func(t *testing.T) {
+		// Mark task as complete.
+		exec.Command(cmdPath, "-complete", "1")
+
+		// List out the tasks.
+		list := exec.Command(cmdPath, "-list")
+
+		output, err := list.CombinedOutput()
+		if err != nil {
+			t.Fatal()
+		}
+
+		// If there's only 1 task and it is marked as complete then
+		// the output of the list command would be blank.
+		if len(output) != 0 {
+			t.Errorf("Expected blank, got %q", output)
+		}
+
 	})
 }
