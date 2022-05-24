@@ -30,11 +30,9 @@ func main() {
 
 	switch {
 	case *list:
-		for _, item := range *todoList {
-			if !item.Done {
-				fmt.Println(item.Task)
-			}
-		}
+		// List the items in list.
+		// List type implemented Stringer interface.
+		fmt.Print(todoList)
 	// Item numbers start with 1.
 	case *complete > 0:
 		// Complete the item number then save the list.
