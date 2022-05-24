@@ -19,6 +19,24 @@ type item struct {
 // This is a list of ToDo items.
 type List []item
 
+func (l *List) String() string {
+	formatted := ""
+
+	for key, task := range *l {
+		prefix := " "
+
+		if task.Done {
+			prefix = "X "
+		}
+
+		// Adjust the item number key to print numbers starting
+		// from 1 rather than 0.
+		formatted += fmt.Sprintf("%s%d: %s\n", prefix, key+1, task.Task)
+	}
+
+	return formatted
+}
+
 // Get method opens the file, decodes the
 // JSON and parses it into a list.
 func (l *List) Get(filename string) error {
