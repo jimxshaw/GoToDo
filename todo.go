@@ -26,12 +26,12 @@ func (l *List) String() string {
 		prefix := " "
 
 		if task.Done {
-			prefix = "X "
+			prefix = "X"
 		}
 
 		// Adjust the item number key to print numbers starting
 		// from 1 rather than 0.
-		formatted += fmt.Sprintf("%s%d: %s\n", prefix, key+1, task.Task)
+		formatted += fmt.Sprintf("%s %d: %s\n", prefix, key+1, task.Task)
 	}
 
 	return formatted
