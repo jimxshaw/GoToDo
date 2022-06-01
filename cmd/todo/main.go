@@ -16,6 +16,7 @@ var listFileName = ".todo.json"
 func main() {
 	// Define and then parse the command line flags.
 	// Return values are pointers.
+	add := flag.Bool("add", false, "Add task to todo list")
 	task := flag.String("task", "", "Task to be added to the list")
 	list := flag.Bool("list", false, "List all tasks")
 	complete := flag.Int("complete", 0, "Item number to be marked as complete")
@@ -56,6 +57,21 @@ func main() {
 		}
 	case *task != "":
 		todoList.Add(*task)
+
+		if err := todoList.Save(listFileName); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+	case *add:
+		// Any non-flag argument(s) will be added as a new task.
+		tasks, err := getTask(os.Stdin, flag.Args()...)
+
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+
+		todoList.Add(tasks)
 
 		if err := todoList.Save(listFileName); err != nil {
 			fmt.Fprintln(os.Stderr, err)
