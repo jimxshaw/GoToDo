@@ -8,7 +8,7 @@ import (
 	todo "github.com/jimxshaw/GoToDo"
 )
 
-const listFileName = ".todo.json"
+var listFileName = ".todo.json"
 
 func main() {
 	// Define and then parse the command line flags.
@@ -18,6 +18,12 @@ func main() {
 	complete := flag.Int("complete", 0, "Item number to be marked as complete")
 
 	flag.Parse()
+
+	// Allow user to specify the file name.
+	// E.g. export LIST_FILENAME=my-new-list.json
+	if os.Getenv("LIST_FILENAME") != "" {
+		listFileName = os.Getenv("LIST_FILENAME")
+	}
 
 	todoList := &todo.List{}
 
