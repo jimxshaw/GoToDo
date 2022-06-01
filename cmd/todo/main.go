@@ -1,9 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
+	"io"
 	"os"
+	"strings"
 
 	todo "github.com/jimxshaw/GoToDo"
 )
@@ -63,4 +66,25 @@ func main() {
 		fmt.Fprintln(os.Stderr, "Invalid option flag")
 		os.Exit(1)
 	}
+}
+
+// Figures out where to get the new task,
+// either through arguments or STDIN.
+func getTask(r io.Reader, args ...string) (string, error) {
+	if len(args) > 0 {
+		return strings.Join(args, " "), nil
+	}
+
+	scanner := bufio.NewScanner(r)
+	scanner.Scan()
+
+	if err := scanner.Err(); err != nil {
+		return "", err
+	}
+
+	if len(scanner.Text()) == 0 {
+		return "", fmt.Errorf("Task cannot be blank")
+	}
+
+	return scanner.Text(), nil
 }
