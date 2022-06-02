@@ -17,14 +17,16 @@ func main() {
 	// Define and then parse the command line flags.
 	// Return values are pointers.
 	add := flag.Bool("add", false, "Add task to todo list")
-	task := flag.String("task", "", "Task to be added to the list")
 	list := flag.Bool("list", false, "List all tasks")
 	complete := flag.Int("complete", 0, "Item number to be marked as complete")
 
 	flag.Parse()
 
 	// Allow user to specify the file name.
-	// E.g. export LIST_FILENAME=my-new-list.json
+	// E.g.
+	// export LIST_FILENAME=my-new-list.json
+	// unset LIST_FILENAME
+	// rm my-new-list.json
 	if os.Getenv("LIST_FILENAME") != "" {
 		listFileName = os.Getenv("LIST_FILENAME")
 	}
@@ -50,13 +52,6 @@ func main() {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
-
-		if err := todoList.Save(listFileName); err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			os.Exit(1)
-		}
-	case *task != "":
-		todoList.Add(*task)
 
 		if err := todoList.Save(listFileName); err != nil {
 			fmt.Fprintln(os.Stderr, err)
