@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 )
 
@@ -87,6 +88,21 @@ func TestTodoCLI(t *testing.T) {
 
 		if expected != string(output) {
 			t.Errorf("Expected %q, got %q", expected, output)
+		}
+	})
+
+	t.Run("ShowDetailedTasks", func(t *testing.T) {
+		cmd := exec.Command(cmdPath, "-verbose")
+
+		output, err := cmd.CombinedOutput()
+		if err != nil {
+			t.Fatal()
+		}
+
+		expected := fmt.Sprintf("  1: %s | created:\n  2: %s | created:\n", task, task2)
+
+		if !strings.Contains(expected, "| created:") && !strings.Contains(string(output), "| created:") {
+			t.Errorf("Show Detailed Tasks is not functioning properly")
 		}
 	})
 
