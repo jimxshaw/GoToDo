@@ -37,6 +37,24 @@ func (l *List) String() string {
 	return formatted
 }
 
+func (l *List) Details() string {
+	formatted := ""
+
+	for key, task := range *l {
+		prefix := " "
+
+		if task.Done {
+			prefix = "X"
+		}
+
+		// Adjust the item number key to print numbers starting
+		// from 1 rather than 0.
+		formatted += fmt.Sprintf("%s %d: %s | created: %s\n", prefix, key+1, task.Task, task.CreationDate)
+	}
+
+	return formatted
+}
+
 // Get method opens the file, decodes the
 // JSON and parses it into a list.
 func (l *List) Get(filename string) error {
