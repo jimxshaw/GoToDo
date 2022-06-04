@@ -40,7 +40,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestTodoCLI(t *testing.T) {
-	task := "test task 1"
+	task := "ONE"
 
 	directory, err := os.Getwd()
 	if err != nil {
@@ -57,7 +57,7 @@ func TestTodoCLI(t *testing.T) {
 		}
 	})
 
-	task2 := "Testing another task"
+	task2 := "TWO"
 
 	t.Run("AddNewTaskFromSTDIN", func(t *testing.T) {
 		cmd := exec.Command(cmdPath, "-add")
@@ -83,7 +83,7 @@ func TestTodoCLI(t *testing.T) {
 			t.Fatal()
 		}
 
-		expected := fmt.Sprintf(" 1: %s\n 2: %s\n", task, task2)
+		expected := fmt.Sprintf("  1: %s\n  2: %s\n", task, task2)
 
 		if expected != string(output) {
 			t.Errorf("Expected %q, got %q", expected, output)
@@ -106,7 +106,7 @@ func TestTodoCLI(t *testing.T) {
 			t.Fatal()
 		}
 
-		expected := fmt.Sprintf("X 1: %s\n", task)
+		expected := fmt.Sprintf("X 1: %s\n  2: %s\n", task, task2)
 
 		// If there's only 1 task and it is marked as complete then
 		// the output of the list command would be blank.
@@ -114,5 +114,30 @@ func TestTodoCLI(t *testing.T) {
 			t.Errorf("Expected %q, got %q", expected, output)
 		}
 
+	})
+
+	t.Run("DeleteTask", func(t *testing.T) {
+		// Delete task.
+		delete := exec.Command(cmdPath, "-del", "1")
+
+		if err := delete.Run(); err != nil {
+			t.Fatal(err)
+		}
+
+		// List out the tasks.
+		list := exec.Command(cmdPath, "-list")
+
+		output, err := list.CombinedOutput()
+		if err != nil {
+			t.Fatal()
+		}
+
+		expected := fmt.Sprintf("  1: %s\n", task2)
+
+		// If there's only 1 task and it is marked as complete then
+		// the output of the list command would be blank.
+		if expected != string(output) {
+			t.Errorf("Expected %q, got %q", expected, output)
+		}
 	})
 }
