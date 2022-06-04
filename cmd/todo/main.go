@@ -17,9 +17,10 @@ func main() {
 	// Define and then parse the command line flags.
 	// Return values are pointers.
 	add := flag.Bool("add", false, "Add task to todo list")
-	list := flag.Bool("list", false, "List all tasks")
+	list := flag.Bool("list", false, "Show all tasks")
 	complete := flag.Int("complete", 0, "Item number to be marked as complete")
 	delete := flag.Int("del", 0, "Item number to be deleted")
+	verbose := flag.Bool("verbose", false, "Show detailed information for all tasks")
 
 	flag.Parse()
 
@@ -46,6 +47,9 @@ func main() {
 		// List the items in list.
 		// List type implemented Stringer interface.
 		fmt.Print(todoList)
+	case *verbose:
+		// Show detailed information for all items in the list.
+		fmt.Print(todoList.Details())
 	// Item numbers start with 1.
 	case *complete > 0:
 		// Complete the item number then save the list.
